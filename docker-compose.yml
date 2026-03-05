@@ -1,0 +1,45 @@
+﻿version: "3.9"
+
+services:
+
+  fog:
+    build: ./fog
+    container_name: fog
+    ports:
+      - "6001:6001"
+    environment:
+      - PORT=6001
+    networks:
+      - iot_net
+
+  edge1:
+    build: ./edge
+    container_name: edge1
+    ports:
+      - "5001:5001"
+    environment:
+      - EDGE_NODE_ID=edge_1
+      - FOG_HOST=http://fog:6001
+      - PORT=5001
+    depends_on:
+      - fog
+    networks:
+      - iot_net
+
+  edge2:
+    build: ./edge
+    container_name: edge2
+    ports:
+      - "5002:5002"
+    environment:
+      - EDGE_NODE_ID=edge_2
+      - FOG_HOST=http://fog:6001
+      - PORT=5002
+    depends_on:
+      - fog
+    networks:
+      - iot_net
+
+networks:
+  iot_net:
+    driver: bridge
